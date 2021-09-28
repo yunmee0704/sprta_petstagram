@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>오조만조</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
+    <!-- Font Awesome icons (free version)-->
+
+    <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+
+    <link rel="icon" href="{{ url_for('static', filename='assets/favicon.ico') }}" type="image/x-icon">
+    <link href="{{ url_for('static',filename='styles.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="slick/slick.css"/>
+
+    <link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="slick/slick.min.js"></script>
+
+
+    <style>
+        * {
+            text-decoration: none;
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .mb-3 {
+            margin-top: 250px;
+            width: 500px;
+        }
+
+        .test {
+            display: inline-block;
+            /*margin: 50px auto 0;*/
+            /*padding: 10px 25px;*/
+            font-family: 'Roboto', sans-serif;
+            background: #fff;
+            /*font-size: 20px;*/
+            /*font-weight: 700;*/
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .test span {
+            background: linear-gradient(to right, #fbcac9, #8ca6ce);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .test:hover {
+            background: linear-gradient(to right, #fbcac9, #8ca6ce);
+        }
+
+        .test:hover span {
+            background: none;
+            color: #fff;
+            -webkit-text-fill-color: #fff;
+        }
+
+        /*///!*puizesection*!///*/
+        .quiz-area h2 {
+            line-height: 1.2;
+            margin-top: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-bottom: 20px;
+        }
+
+        .quiz-area content {
+            padding: 0;
+        }
+
+        .qcontainer {
+            color: #1E1238;
+            margin-left: 350px;
+        }
+
+        .quiz-area ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .quiz-area ul li {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            border-radius: 5px;
+            margin: 5px 0;
+            padding: 3px 10px;
+        }
+
+        .quiz-area.theme ul li {
+            color: #1E1238;
+            border: 1px solid #5F3EA4;
+            opacity: 0.8;
+            filter: alpha(opacity=80);
+            background-color: #B28EC2;
+            width: 500px;
+        }
+
+        .quiz-area.theme ul li:hover {
+            opacity: 1;
+            filter: alpha(opacity=100);
+            background-color: #B28EC2;
+        }
+
+        .btn {
+            margin-left: 575px;
+
+        }
+
+
+    </style>
+    {#   ajax스크립트#}
+    <script>
+        $(document).ready(function () {
+            //웹페이지가 열리면 pet_type_cre() 시작
+            pet_type_cre()
+            pet_list_cre()
+
+        });
+
+        //펫타입 개수 대로 메뉴 생성하는 함수 (All은 초기 1회 무조건 생성)
+        function pet_type_cre() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/pettype',
+                data: {},
+                success: function (response) {
+                    console.log('pet_type_cre() 함수실행')
+                    let pet_types = response['pet_types']
+                    let msg = response['result']
+                    console.log('pet_type_cre(data_send)_get :', msg, pet_types)
+                    $('#pet_type_btn').append(`<button type="button" class="btn btn-default test" style="color: #BA55D3"onclick="pet_list_cre()">ALL</button>`)
+                    for (let i = 0; i < pet_types.length; i++) {
+                        temp_html = `<button type="button" class="btn btn-default test" style="color: #BA55D3" onclick="search('${pet_types[i]['type']}')">${pet_types[i]['type']}</button>`
+                        if (i === (pet_types.length - 1)) {
+                            $('#pet_type_btn').append(temp_html)
+                            console.log('type_메뉴_생성완료', pet_types.length, '개(All제외)')
+                            break
+                        } else {
+                            $('#pet_type_btn').append(temp_html)
+                        }
+                    }
+                    console.log('pet_type_cre() 함수종료')
+                }
+            });
+        }
+
+        function pet_list_cre() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/petlist',
+                data: {},
+                success: function (response) {
+                    console.log('pet_list_cre() 함수실행')
+                    let pet_lists = response['pet_lists']
+                    let msg = response['result']
+                    console.log('pet_list_cre(data_send)_get :', msg, pet_lists)
+                    $('#pet_list').empty()
+                    for (let i = 0; i < pet_lists.length; i++) {
+                        temp_html = `<li>
+                    <div class="card" style="width: 300px;">
+
+                        <rect width="100 %" height="100%" fill="#868e96"></rect>
+                        <img src=${pet_lists[i]['img-url']}>
+                        </svg>
+
+                        <div class="card-body">
+                            <h5 class="card-title">${pet_lists[i]['name']}</h5>
+                            <p class="card-text">${pet_lists[i]['note']}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">${pet_lists[i]['breed']}</li>
+                            <li class="list-group-item">${pet_lists[i]['sex']}</li>
+                            <li class="list-group-item">${pet_lists[i]['birth']}</li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="#" class="heart">❤좋아요</a>
+
+                        </div>
+                    </div>
+                </li>`
+                        // 마지막 리스트 작성하고나서 list 생성완료 콘솔로그 발생
+                        if (i === (pet_lists.length - 1)) {
+                            $('#pet_list').append(temp_html)
+                            console.log('list_생성완료', pet_lists.length, '개')
+                            break
+                        } else {
+                            console.log('list_생성중', i + 1, '개')
+                            $('#pet_list').append(temp_html)
+                        }
+                    }
+
+                    console.log('pet_list_cre() 함수종료')
+                }
+            });
+        }
+
+        function search(pet_type) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/petlist',
+                data: {},
+                success: function (response) {
+                    console.log('search() 함수실행')
+                    let pet_lists = response['pet_lists']
+                    let msg = response['result']
+                    console.log('search_get :', msg, pet_lists)
+                    $('#pet_list').empty()
+                    for (let i = 0; i < pet_lists.length; i++) {
+                        if (pet_lists[i]['type'] === pet_type) {
+                            temp_html = `<li>
+                    <div class="card" style="width: 300px;">
+
+                        <rect fill="#868e96"></rect>
+                        <img src=${pet_lists[i]['img-url']} width="100px">
+                        </svg>
+
+                        <div class="card-body">
+                            <h5 class="card-title">${pet_lists[i]['name']}</h5>
+                            <p class="card-text">${pet_lists[i]['note']}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">${pet_lists[i]['breed']}</li>
+                            <li class="list-group-item">${pet_lists[i]['sex']}</li>
+                            <li class="list-group-item">${pet_lists[i]['birth']}</li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="#" class="heart">❤좋아요</a>
+
+                        </div>
+                    </div>
+                </li>`
+                            $('#pet_list').append(temp_html)
+                            console.log('serch 함수 실행중', i + 1, ' 번째')
+                        } else {
+
+                        }
+                    }
+
+
+                }
+            });
+        }
+
+
+    </script>
+</head>
+
+<body id="page-top">
+
+<nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="#page-top">petstagem</a>
+        <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolio">petstagrem</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#about">Quize</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded"
+                                                     href="#contact">About</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!--로고-->
+<header class="text-white text-center">
+    <div class="container d-flex align-items-center flex-column" style="display: block;">
+        <!-- Masthead Avatar Image-->
+        <img class="mb-3" src="static/assets/img/bback.png" alt="..." style="text-align: center;"/>
+    </div>
+
+</header>
+
+<!--카드섹션-->
+<section class=" portfolio" id="portfolio">
+    <div>
+
+        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">petstagem</h2>
+        <!-- -별- -->
+        <div class="divider-custom">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+    </div>
+    <!--        메뉴바-->
+    <div class="row">
+        <div class="col">
+            <div class="btn-group " role="group" id="pet_type_btn">
+
+
+            </div>
+        </div>
+    </div>
+    <!-- Portfolio Grid Items-->
+
+
+    <div class="row justify-content-center">
+        <!-- Portfolio Item 1-->
+
+        <div class="slider_wrapper">
+            <ul class="slides" id="pet_list">
+
+
+            </ul>
+
+        </div>
+        <p class="controls">
+            <span class="prev"><</span>
+            <span class="next">></span>
+        </p>
+    </div>
+</section>
+
+<!-- About Section-->
+<section class="page-section alert-info text-white mb-0" id="about">
+    <div class="container">
+        <!-- About Section Heading-->
+        <h2 class="page-section-heading text-center text-uppercase text-secondary">quize</h2>
+        <!-- Icon Divider-->
+        <div class="divider-custom divider-light">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+        <!-- About Section Content-->
+        <div class="row">
+            <div class="container-fluid quiz-area theme">
+                <h2 class="qcontainer"> 강아지나 고양이가 절대 먹으면 안되는 것은? </h2>
+                <section class="qcontainer">
+                    <article class="rows">
+                        <content class="col-md-8 col-lg-8 col-sm-8">
+
+                            <ul>
+                                <li> 1. 맛있는 사료</li>
+                                <li> 2. 건강한 사료</li>
+                                <li> 3. 값비싼 사료</li>
+gi
+                                <li> 4. 독극물</li>
+                            </ul>
+
+                        </content>
+                    </article>
+                </section>
+            </div>
+        </div>
+        <!-- About Section Button-->
+        <div class="nextbtn">
+            <button type="button" class="btn btn-light">NEXT></button>
+        </div>
+    </div>
+</section>
+<!-- Contact Section-->
+<section class="page-section" id="contact">
+    <div class="container">
+        <!-- Contact Section Heading-->
+        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Contact Me</h2>
+        <!-- Icon Divider-->
+        <div class="divider-custom">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+        <!-- Contact Section Form-->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <!-- * * * * * * * * * * * * * * *-->
+                <!-- * * SB Forms Contact Form * *-->
+                <!-- * * * * * * * * * * * * * * *-->
+                <!-- This form is pre-integrated with SB Forms.-->
+                <!-- To make this form functional, sign up at-->
+                <!-- https://startbootstrap.com/solution/contact-forms-->
+                <!-- to get an API token!-->
+                <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+                    <!-- Name input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="name" type="text" placeholder="Enter your name..."
+                               data-sb-validations="required"/>
+                        <label for="name">Full name</label>
+                        <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                    </div>
+                    <!-- Email address input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="email" type="email" placeholder="name@example.com"
+                               data-sb-validations="required,email"/>
+                        <label for="email">Email address</label>
+                        <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
+                        <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
+                    </div>
+                    <!-- Phone number input-->
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890"
+                               data-sb-validations="required"/>
+                        <label for="phone">Phone number</label>
+                        <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.
+                        </div>
+                    </div>
+                    <!-- Message input-->
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..."
+                                  style="height: 10rem" data-sb-validations="required"></textarea>
+                        <label for="message">Message</label>
+                        <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
+                    </div>
+                    <!-- Submit success message-->
+                    <!---->
+                    <!-- This is what your users will see when the form-->
+                    <!-- has successfully submitted-->
+                    <div class="d-none" id="submitSuccessMessage">
+                        <div class="text-center mb-3">
+                            <div class="fw-bolder">Form submission successful!</div>
+                            To activate this form, sign up at
+                            <br/>
+                            <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
+                        </div>
+                    </div>
+                    <!-- Submit error message-->
+                    <!---->
+                    <!-- This is what your users will see when there is-->
+                    <!-- an error submitting the form-->
+                    <div class="d-none" id="submitErrorMessage">
+                        <div class="text-center text-danger mb-3">Error sending message!</div>
+                    </div>
+                    <!-- Submit Button-->
+                    <button class="btn btn-primary btn-xl disabled" id="submitButton" type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Footer-->
+<footer class="footer text-center">
+    <div class="container">
+        <div class="row">
+            <!-- Footer Location-->
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Location</h4>
+                <p class="lead mb-0">
+                    2215 John Daniel Drive
+                    <br/>
+                    Clark, MO 65243
+                </p>
+            </div>
+            <!-- Footer Social Icons-->
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Around the Web</h4>
+                <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-facebook-f"></i></a>
+                <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-twitter"></i></a>
+                <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-linkedin-in"></i></a>
+                <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-dribbble"></i></a>
+            </div>
+            <!-- Footer About Text-->
+            <div class="col-lg-4">
+                <h4 class="text-uppercase mb-4">About Freelancer</h4>
+                <p class="lead mb-0">
+                    Freelance is a free to use, MIT licensed Bootstrap theme created by
+                    <a href="http://startbootstrap.com">Start Bootstrap</a>
+                    .
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Copyright Section-->
+<div class="copyright py-4 text-center text-white">
+    <div class="container"><small>Copyright &copy; Your Website 2021</small></div>
+</div>
+<!-- Portfolio Modals-->
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<!-- * *                               SB Forms JS                               * *-->
+<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</body>
+</html>
