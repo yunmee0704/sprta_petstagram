@@ -30,8 +30,9 @@
         }
 
         .mb-31 {
-            margin-top: 250px;
-            width: 500px;
+            margin-top: 300px;
+            width: 300px;
+            margin-bottom: 150px;
         }
 
         .test {
@@ -355,6 +356,33 @@
 
         }
 
+        .rank1 img{
+         width:auto;
+         height:400px;
+
+         }
+        .rank1{
+            position:absolute;
+            width:550px;
+            top:200px;
+            left:200px;
+
+        }
+        .rank2 img{
+         width:auto;
+         height:400px;
+
+
+         }
+        .rank2{
+            position:absolute;
+            left:1150px;
+            top:200px;
+             width:550px;
+
+
+        }
+
 
     </style>
     <script>
@@ -408,7 +436,7 @@
                     <div class="card" style="width: 300px;">
 
                         <rect width="100 %" height="100%" fill="#868e96"></rect>
-                        <img src=${pet_lists[i]['img-url']}>
+                        <img src=${pet_lists[i]['img-url']} width="auto" height="300px">
                         </svg>
 
                         <div class="card-body">
@@ -530,6 +558,10 @@
         <!-- Masthead Avatar Image-->
         <img class="mb-31" src="static/assets/img/bback.png" alt="..." style="text-align: center;"/>
     </div>
+
+    <div class="rank1"> <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fphinf.pstatic.net%2Fshop%2F20170830_148%2Fsouk2222_1504086954258Y5dOC_JPEG%2F27394133899116341_613987762.jpg&type=sc960_832"> </div>
+    <div class="rank2"><img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA5MTNfMjc4%2FMDAxNjMxNTExMTU5NTg3.rD2amH19eL4xDSu41cuplEEzKdLRsF9K11eZ471K12gg.1DYTqyx6be5-RTRSy51vHLbUnGb42GMdTpgXGIFBHD4g.PNG.star_cat_%2F20210913_143010.png&type=sc960_832"></div>
+
 </header>
 
 <!-- Main Section-->
@@ -563,10 +595,10 @@
                 </ul>
 
             </div>
-            <p class="controls">
+
                 <span class="prev"><</span>
                 <span class="next">></span>
-            </p>
+
         </div>
     </div>
 </section>
